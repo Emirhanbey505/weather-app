@@ -1,7 +1,7 @@
 let map;
 let marker;
 
-const API_KEY = "YOUR_API_KEY"; // یہاں اپنی OpenWeather API Key ڈالیں
+const API_KEY = "e08d904b007cb14f02d470cb76f2543a"; // یہاں اپنی OpenWeather API Key ڈالیں
 
 // نقشہ شروع میں لوڈ کرنا
 function initMap(lat = 34.0151, lon = 71.5249) { // Default Peshawar

@@ -1,25 +1,31 @@
-async function getWeather() {
-    const city = document.getElementById('cityInput').value;
-    if (!city) {
-        alert('Please enter a city name!');
-        return;
-    }
+var map = L.map('map').setView([34.0151, 71.5249], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+var marker = L.marker([34.0151, 71.5249]).addTo(map).bindPopup("Peshawar");
 
-    const apiKey = 'YOUR_API_KEY'; // بعد میں یہاں اپنی API key ڈالنا
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+async function getWeather(){
+  const city = document.getElementById("cityInput").value;
+  if(!city) return;
+  const result = document.getElementById("result");
+  result.innerHTML = "Loading...";
+  try {
+    const res = await fetch(`https://wttr.in/${city}?format=j1`);
+    const data = await res.json();
+    const current = data.current_condition[0];
+    const area = data.nearest_area[0];
+    const lat = parseFloat(area.latitude);
+    const lon = parseFloat(area.longitude);
 
-    // For now, demo data without API
-    document.getElementById('cityName').innerText = city;
-    document.getElementById('temp').innerText = Math.floor(Math.random() * 15 + 20) + '°C';
-    document.getElementById('desc').innerText = 'Sunny / Clear Weather - Demo';
-
-    // جب تمہارے پاس API key آئے گی تو اوپر والا url استعمال ہوگا
-    // try {
-    //   const response = await fetch(url);
-    //   const data = await response.json();
-    //   document.getElementById('temp').innerText = data.main.temp + '°C';
-    //   document.getElementById('desc').innerText = data.weather[0].description;
-    // } catch (error) {
-    //   alert('City not found');
-    // }
+    result.innerHTML = `
+      <h3>${area.areaName[0].value}, ${area.country[0].value}</h3>
+      <p>🌡️ ${current.temp_C}°C - ${current.weatherDesc[0].value}</p>
+      <p>💨 Wind: ${current.windspeedKmph} km/h</p>
+    `;
+    map.setView([lat, lon], 8);
+    marker.setLatLng([lat, lon]).bindPopup(`${city} - ${current.temp_C}°C`).openPopup();
+  } catch(e) {
+    result.innerHTML = "City not found!";
+  }
 }
+getWeather("Peshawar");

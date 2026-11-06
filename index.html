@@ -11,8 +11,12 @@
     <div class="card">
       <h2>Weather App 🌦️ with Map</h2>
       <input type="text" id="cityInput" placeholder="Enter city e.g Peshawar">
-      <button onclick="getWeather()">Search</button>
+      <div class="btns">
+        <button onclick="getWeather()">Search</button>
+        <button class="live" onclick="getLiveLocation()">📍 My Location</button>
+      </div>
       <div id="result"></div>
+      <div id="forecast"></div>
     </div>
     <div id="map"></div>
   </div>

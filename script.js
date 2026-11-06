@@ -27,5 +27,5 @@ async function getWeather(){
   } catch(e) {
     result.innerHTML = "City not found!";
   }
-}
-getWeather("Peshawar");
+}      document.getElementById("cityInput").value = "Peshawar";
+    getWeather();

@@ -1,15 +1,15 @@
-const API_KEY = "e08d904b007cb14f02d470cb76f2543a";
+const API_KEY = "YAHAN APNI ASAL API KEY PASTE KARO";
 
 function getWeatherIcon(main){
   main = main.toLowerCase();
-  if(main.includes("clear")) return "☀️";
-  if(main.includes("cloud")) return "☁️";
-  if(main.includes("rain")) return "🌧️";
-  if(main.includes("drizzle")) return "🌦️";
-  if(main.includes("thunder")) return "⛈️";
-  if(main.includes("snow")) return "❄️";
-  if(main.includes("mist") || main.includes("haze") || main.includes("fog")) return "🌫️";
-  return "🌤️";
+  if(main.includes("clear")) return "SUNNY";
+  if(main.includes("cloud")) return "CLOUDY";
+  if(main.includes("rain")) return "RAINY";
+  if(main.includes("drizzle")) return "DRIZZLE";
+  if(main.includes("thunder")) return "STORM";
+  if(main.includes("snow")) return "SNOW";
+  if(main.includes("mist") || main.includes("haze") || main.includes("fog")) return "FOGGY";
+  return "NICE";
 }
 
 async function getWeather(){
@@ -19,12 +19,8 @@ async function getWeather(){
   try{
     const res = await fetch(url);
     const data = await res.json();
-    if(res.status == 401){
-      alert("API Key galat hai. Apni asal key lagao");
-      return;
-    }
     if(data.cod != 200){
-      alert("شہر نہیں ملا!");
+      alert("Error: " + data.message);
       return;
     }
     showWeather(data);
@@ -36,9 +32,9 @@ async function getWeather(){
 }
 
 function showWeather(data){
-  const icon = getWeatherIcon(data.weather[0].main);
+  const iconText = getWeatherIcon(data.weather[0].main);
   document.getElementById("weather").innerHTML = `
-    <h2>${data.name}, ${data.sys.country} ${icon}</h2>
+    <h2>${data.name}, ${data.sys.country} - ${iconText}</h2>
     <p>درجہ حرارت: ${data.main.temp}°C</p>
     <p>موسم: ${data.weather[0].description}</p>
     <p>ہوا: ${data.wind.speed} m/s</p>
@@ -57,10 +53,10 @@ async function getForecast(city){
   daily.forEach(item => {
     const date = item.dt_txt.split(" ")[0].slice(5);
     const temp = Math.round(item.main.temp);
-    const icon = getWeatherIcon(item.weather[0].main);
+    const iconText = getWeatherIcon(item.weather[0].main);
     const card = document.createElement("div");
-    card.style.cssText = "background:#eee;padding:10px;border-radius:10px;min-width:70px;text-align:center;";
-    card.innerHTML = `<div>${date}</div><div style="font-size:24px">${icon}</div><div>${temp}°C</div>`;
+    card.style.cssText = "background:#eee;padding:10px;border-radius:10px;min-width:75px;text-align:center;";
+    card.innerHTML = `<div>${date}</div><div style="font-weight:bold;margin:5px 0">${iconText}</div><div>${temp}°C</div>`;
     forecastDiv.appendChild(card);
   });
 }

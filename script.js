@@ -16,7 +16,6 @@ async function getWeather(){
     const area = data.nearest_area[0];
     const lat = parseFloat(area.latitude);
     const lon = parseFloat(area.longitude);
-
     result.innerHTML = `
       <h3>${area.areaName[0].value}, ${area.country[0].value}</h3>
       <p>🌡️ ${current.temp_C}°C - ${current.weatherDesc[0].value}</p>
@@ -26,5 +25,7 @@ async function getWeather(){
     marker.setLatLng([lat, lon]).bindPopup(`${city} - ${current.temp_C}°C`).openPopup();
   } catch(e) {
     result.innerHTML = "City not found!";
-}      document.getElementById("cityInput").value = "Peshawar";
-    getWeather();
+  }
+}
+document.getElementById("cityInput").value = "Peshawar";
+getWeather();

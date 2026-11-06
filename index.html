@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Weather App - Emirhan</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Weather App with Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app">
     <div class="card">
-        <h2>Weather App 🌤️</h2>
-        <div class="search">
-            <input type="text" id="cityInput" placeholder="Enter city name...">
-            <button onclick="getWeather()">Search</button>
-        </div>
-        <div id="result">
-            <h3 id="cityName"></h3>
-            <h1 id="temp"></h1>
-            <p id="desc"></p>
-        </div>
+      <h2>Weather App 🌦️ with Map</h2>
+      <input type="text" id="cityInput" placeholder="Enter city e.g Peshawar">
+      <button onclick="getWeather()">Search</button>
+      <div id="result"></div>
     </div>
-    <script src="script.js"></script>
+    <div id="map"></div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

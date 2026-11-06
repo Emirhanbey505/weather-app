@@ -26,6 +26,5 @@ async function getWeather(){
     marker.setLatLng([lat, lon]).bindPopup(`${city} - ${current.temp_C}°C`).openPopup();
   } catch(e) {
     result.innerHTML = "City not found!";
-  }
 }      document.getElementById("cityInput").value = "Peshawar";
     getWeather();

@@ -1,31 +1,82 @@
-var map = L.map('map').setView([34.0151, 71.5249], 6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
-var marker = L.marker([34.0151, 71.5249]).addTo(map).bindPopup("Peshawar");
+let map;
+let marker;
 
-async function getWeather(){
-  const city = document.getElementById("cityInput").value;
-  if(!city) return;
-  const result = document.getElementById("result");
-  result.innerHTML = "Loading...";
-  try {
-    const res = await fetch(`https://wttr.in/${city}?format=j1`);
-    const data = await res.json();
-    const current = data.current_condition[0];
-    const area = data.nearest_area[0];
-    const lat = parseFloat(area.latitude);
-    const lon = parseFloat(area.longitude);
-    result.innerHTML = `
-      <h3>${area.areaName[0].value}, ${area.country[0].value}</h3>
-      <p>🌡️ ${current.temp_C}°C - ${current.weatherDesc[0].value}</p>
-      <p>💨 Wind: ${current.windspeedKmph} km/h</p>
-    `;
-    map.setView([lat, lon], 8);
-    marker.setLatLng([lat, lon]).bindPopup(`${city} - ${current.temp_C}°C`).openPopup();
-  } catch(e) {
-    result.innerHTML = "City not found!";
-  }
+const API_KEY = "YOUR_API_KEY"; // یہاں اپنی OpenWeather API Key ڈالیں
+
+// نقشہ شروع میں لوڈ کرنا
+function initMap(lat = 34.0151, lon = 71.5249) { // Default Peshawar
+    if (!map) {
+        map = L.map('map').setView([lat, lon], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    } else {
+        map.setView([lat, lon], 10);
+    }
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lon]).addTo(map);
 }
-document.getElementById("cityInput").value = "Peshawar";
-getWeather();
+initMap();
+
+function getWeather() {
+    const city = document.getElementById("cityInput").value;
+    if (!city) return alert("شہر کا نام لکھیں");
+    fetchWeatherByCity(city);
+}
+
+function fetchWeatherByCity(city) {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data.cod !== 200) {
+                document.getElementById("result").innerHTML = "شہر نہیں ملا!";
+                return;
+            }
+            showWeather(data);
+            initMap(data.coord.lat, data.coord.lon);
+            fetchForecast(data.name);
+        });
+}
+
+function getLiveLocation() {
+    document.getElementById("result").innerHTML = "لوکیشن لی جا رہی ہے...";
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    showWeather(data);
+                    initMap(lat, lon);
+                    fetchForecast(data.name);
+                });
+        }, () => {
+            alert("لوکیشن کی اجازت دیں!");
+        });
+    } else {
+        alert("آپ کا براؤزر لوکیشن سپورٹ نہیں کرتا");
+    }
+}
+
+function showWeather(data) {
+    document.getElementById("result").innerHTML = `
+        <h3>${data.name}, ${data.sys.country}</h3>
+        <p>🌡️ درجہ حرارت: ${data.main.temp}°C</p>
+        <p>☁️ موسم: ${data.weather[0].description}</p>
+        <p>💨 ہوا: ${data.wind.speed} m/s</p>
+    `;
+}
+
+function fetchForecast(city) {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
+    fetch(url).then(res => res.json()).then(data => {
+        let html = "<h4>اگلے دنوں کی پیشن گوئی:</h4><div style='display:flex;gap:8px;overflow:auto'>";
+        for (let i = 0; i < data.list.length; i += 8) {
+            const d = data.list[i];
+            html += `<div style='background:#f0f0f0;padding:8px;border-radius:8px'><p>${d.dt_txt.split(' ')[0]}</p><p>${d.main.temp}°C</p><p>${d.weather[0].main}</p></div>`;
+        }
+        html += "</div>";
+        document.getElementById("forecast").innerHTML = html;
+    });
+}

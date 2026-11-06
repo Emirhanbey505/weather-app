@@ -1,4 +1,4 @@
-const API_KEY = "YAHAN APNI ASAL API KEY PASTE KARO";
+const API_KEY = "e08d904b007cb14f02d470cb76f2543a";
 
 function getWeatherIcon(main){
   main = main.toLowerCase();
